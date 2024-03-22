@@ -5,7 +5,6 @@ import bcryptjs from "bcryptjs"
 import { NextRequest, NextResponse } from 'next/server'
 
 connectDB()
-
 // localhost:3000/api/users/signup
 
 export async function POST(request: NextRequest, response: NextResponse) {
@@ -16,6 +15,9 @@ export async function POST(request: NextRequest, response: NextResponse) {
 
         // validation of data
         console.log(reqBody);
+        if (!username || !email || !password) {
+            return NextResponse.json({ error: "Something is wrong with the data" }, { status: 400 })
+        }
 
         // checking if the user already exists or not
         const user = await User.findOne({ email })
@@ -24,8 +26,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
         }
 
         // hashing the password
-        const salt = await bcryptjs.genSalt(10)
-        const hashedPassword = await bcryptjs.hash(password, salt)
+        const hashedPassword = await bcryptjs.hash(password, 10)
 
         // creating a user for db
         const savedUser = await User.create({ username, email, password: hashedPassword })
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
         })
     } catch (err: any) {
         return NextResponse.json({
+            success: false,
             error: err.message
         }, { status: 500 })
     }
