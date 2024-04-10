@@ -1,50 +1,56 @@
-import User from "@/models/userModel";
 import { connectDB } from "@/db";
-import { sendEmail } from "@/helpers/mailer";
+import User from "@/models/User";
+import { NextRequest, NextResponse } from "next/server"
 import bcryptjs from "bcryptjs"
-import { NextRequest, NextResponse } from 'next/server'
+import { sendEmail } from "@/utils/mailer";
 
+// connection to DB
 connectDB()
-// localhost:3000/api/users/signup
 
-export async function POST(request: NextRequest, response: NextResponse) {
+// POST request on signup route
+export async function POST(request: NextRequest) {
     try {
-        // getting data from user
-        const reqBody = await request.json()
-        const { username, email, password } = reqBody
+        // get the data from request body
+        const { username, email, password } = await request.json()
 
-        // validation of data
-        console.log(reqBody);
-        if (!username || !email || !password) {
-            return NextResponse.json({ error: "Something is wrong with the data" }, { status: 400 })
-        }
+        // validation of the data
 
-        // checking if the user already exists or not
+        // check if the user exists in the db or not
         const user = await User.findOne({ email })
         if (user) {
-            return NextResponse.json({ error: "User Already exists" }, { status: 400 })
+            return NextResponse.json({
+                success: false,
+                message: "User is already registered"
+            }, { status: 400 })
         }
 
-        // hashing the password
-        const hashedPassword = await bcryptjs.hash(password, 10)
+        // hash the password
+        const salt = await bcryptjs.genSalt(10)
+        const hashedPassword = await bcryptjs.hash(password, salt)
 
-        // creating a user for db
-        const savedUser = await User.create({ username, email, password: hashedPassword })
-        console.log(savedUser)
-
-        // send verification email
-        await sendEmail({ email, emailType: "VERIFY", userId: savedUser._id })
-
-        return NextResponse.json({
-            message: "User registered successfully",
-            success: true,
-            savedUser
+        // create an entry for user in db
+        const newUser = await User.create({
+            email,
+            username,
+            password: hashedPassword
         })
+        console.log(newUser)
+
+        // send verification email to the user
+        await sendEmail({ email, emailType: "VERIFY", userId: newUser._id })
+
+        // return the response
+        return NextResponse.json({
+            message: "User has been registered successfully",
+            success: true,
+            newUser
+        }, { status: 200 })
+
     } catch (err: any) {
         return NextResponse.json({
             success: false,
+            message: "Something went wrong while signing up the user",
             error: err.message
         }, { status: 500 })
     }
 }
-

@@ -1,37 +1,26 @@
-## File Structure in Nextjs
-- Nextjs has inbuilt file based routing so login/page.tsx will have /login route 
-- Nextjs has inbuilt feature to handle api so inside the app folder create api folder then inside do all the works and make sure to have a file `route.ts/js` to handle the routing of api
+## Folder and File structure in nextjs
+- Inside the `src/app` folder we will have `api` folder which will contain all the routes for api and we have to make them folder wise as nextjs follows `file based routing` so `api/users/signup/route.ts` means `http:localhost:5000/api/users/signup`
 
-## Token and TokenExpiry
-- By default, user is not `verified` so while the user has signed up, we will take `Token (verifyToken)` and `Expiry (verifyTokenExpiry)` as well which our App has generated
-- Now as the Token and TokenExpiry was generated, they are saved in the database and also sent to the user email
-- User gets a link and the data we got earlier (Token and TokenExpiry) will be sent back to our App and now our App queries to the database if the data is present in our db or not (Token and TokenExpiry) if it matches then just verify our user
+- Every route in frontend will be inside `src/app` directory so we got to make folder like this `src/app/signup/page.tsx` so signup page will be created and can be accessed by going to the route `/signup`
 
-Same works for ForgotPasswordToken and ForgotPasswordTokenExpiry as well
 
-## Models in mongodb and nextjs
-Sometimes Next.js do not know whether the model was already created/not and that becomes an issue so to handle that we define that `mongoose.models.model_name || mongoose.model("model_name", modelSchema)` to avoid any issue - If the model exists just access it otherwise just create the model
+## Verification and Forgot Password of User
+- Two things are important here => `Token and TokenExpiry`
 
-## Connection in Database
-- As we know database is always on another continent so handle it inside try catch block and connectivity may take some time so use async await.
+- First App generates an token and time and sends it to the database (entry) and to the user (mail) in the form of link
 
-***Code Example***
+- User will click on the link and now the App will get the information from the user and now App will do validation of the data (token) => token and db token matches or not and has token expired or not
 
-<code>
-    await mongoose.connect(process.env.MONGODB_URL!)
-    const connection = mongoose.connection
+- Once validation is done, now do the task if not then don't do the task
 
-    connection.on("connected", () => {
-        console.log("MongoDB connected successfully !!!")
-    })
+- The verification and forgot password both works on this same logic !!!
 
-    connection.on("error", (err) => {
-        console.log("MongoDB connection error, please check for the connection", err)
-        process.exit(1)
-    })
-</code>
 
-## Feature of Nextjs
-- Nextjs runs on Edge runtime which means that nextjs runs on your nearest location computing resource and doesn't runs on a standard server and that's why it is deployed on vercel as behind the scence lots of thing happens
+## Nextjs features
+- Nextjs works on `Edge Runtime` or edge computing.
 
-- The DB connection function we wrote needs to be used for every routes as things work differently here in nextjs as behind the scenes functions are deployed and functions individually doesn't know that they are connected to the database/not so it's a issue and we need to call the function always
+- Nextjs does not knows if they are connected to the MongoDB for the first time or they already made connection or not so it is solved in a way.
+
+- `mongoose.models.users || mongoose.model("users", userSchema)` means that it will check if there is already any model named users present in the db or not if yes then access it if not then just create it
+
+- Nextjs runs on the nearest computing resources and does not runs on a standard server and that's why it is deployed on vercel (Too much behind the scenes) so for each api route we always have to connect to Database  seperately.
