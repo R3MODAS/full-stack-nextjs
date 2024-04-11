@@ -1,26 +1,32 @@
-import User from "@/models/User"
 import nodemailer from "nodemailer"
 import crypto from "crypto"
+import User from "@/models/User"
 
-export const sendEmail = async ({ email, emailType, userId }: any) => {
-    try {
-        // generating a token
+interface Props{
+    email: string
+    emailType: string
+    userId: Symbol
+}
+
+export const mailer = async ({email, emailType, userId}: Props) => {
+    try{
+        // generate a token for verify and reset
         const token = crypto.randomUUID()
 
-        // checking the type of email (Verify Email/Reset Password)
-        if (emailType === "VERIFY") {
+        // check if the email is for verify or reset
+        if(emailType === "VERIFY"){
             await User.findByIdAndUpdate(
-                userId,
-                { verifyToken: token, verifyTokenExpiry: Date.now() + 3600000 },
-                { new: true }
+                {_id: userId},
+                {verifyToken: token, verifyTokenExpiry: Date.now() + 3600000},
+                {new: true}
             )
         }
 
-        else if (emailType === "RESET") {
+        else if(emailType === "RESET"){
             await User.findByIdAndUpdate(
-                userId,
-                { forgotPasswordToken: token, forgotPasswordTokenExpiry: Date.now() + 3600000 },
-                { new: true }
+                {_id: userId},
+                {forgotPasswordToken: token, forgotPasswordTokenExpiry: Date.now() + 3600000},
+                {new: true}
             )
         }
 
@@ -29,13 +35,14 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
             host: process.env.MAIL_HOST,
             port: process.env.MAIL_PORT,
             auth: {
-                user: process.env.MAIL_USER,
+                user: process.env.MAIL_USER, 
                 pass: process.env.MAIL_PASS
             }
         })
 
-        // send the mail
-        const info = await transporter.sendMail({
+        // send the mail to the user
+        const mailResponse
+         = await transporter.sendMail({
             from: "Sharadindu Das",
             to: `${email}`,
             subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
@@ -44,8 +51,10 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
             `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/api/users/reset-password?token=${token}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/api/users/reset-password?token=${token}</p>`}`
         })
 
-        return info
-    } catch (err: any) {
+        // return the mail response
+        return mailResponse
+
+    }catch(err: any){
         throw new Error(err.message)
     }
 }
