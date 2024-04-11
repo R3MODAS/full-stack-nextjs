@@ -26,11 +26,11 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
 
         // create a transporter
         const transporter = nodemailer.createTransport({
-            host: process.env.HOST_NAME,
-            port: process.env.HOST_PORT,
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
             auth: {
-                user: process.env.HOST_USER,
-                pass: process.env.HOST_PASS,
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS
             }
         })
 
@@ -40,8 +40,8 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
             to: `${email}`,
             subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
             html: ` ${emailType === "VERIFY" ? 
-            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/verify-email?token=${token}">here</a> to verify your email or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verify-email?token=${token}</p>` : 
-            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/reset-password?token=${token}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/reset-password?token=${token}</p>`}`
+            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/api/users/verify-email?token=${token}">here</a> to verify your email or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/api/users/verify-email?token=${token}</p>` : 
+            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/api/users/reset-password?token=${token}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/api/users/reset-password?token=${token}</p>`}`
         })
 
         return info
