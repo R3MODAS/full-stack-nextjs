@@ -24,3 +24,8 @@
 - `mongoose.models.users || mongoose.model("users", userSchema)` means that it will check if there is already any model named users present in the db or not if yes then access it if not then just create it
 
 - Nextjs runs on the nearest computing resources and does not runs on a standard server and that's why it is deployed on vercel (Too much behind the scenes) so for each api route we always have to connect to Database  seperately.
+
+## Things to remember in Nextjs for Backend
+- Always make sure to connect to MongoDB first (Nextjs does not knows if they are connected to MongoDB for the first time or not) and then define a function with the request name (POST/GET/PUT/DELETE) that we are gonna make on a specific route (POST request on signup route) and inside that function, the controller logic is written.
+
+- NextRequest and NextResponse are used for request and response here and request.json() works as request.body

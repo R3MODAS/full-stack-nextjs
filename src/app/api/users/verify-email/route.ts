@@ -13,7 +13,7 @@ export const POST = async (request: NextRequest) => {
         const { token } = await request.json()
 
         // validation of the token
-        const user = await User.findOne({ verifyToken: token, verifyExpiryToken: { $gt: Date.now() } })
+        const user = await User.findOne({ verifyToken: token, verifyTokenExpiry: { $gt: Date.now() } })
         if(!user){
             return NextResponse.json({
                 success: false,
