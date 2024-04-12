@@ -2,13 +2,7 @@ import nodemailer from "nodemailer"
 import crypto from "crypto"
 import User from "@/models/User"
 
-interface Props{
-    email: string
-    emailType: string
-    userId: Symbol
-}
-
-export const mailer = async ({email, emailType, userId}: Props) => {
+export const mailer = async ({email, emailType, userId}: any) => {
     try{
         // generate a token for verify and reset
         const token = crypto.randomUUID()
@@ -47,8 +41,8 @@ export const mailer = async ({email, emailType, userId}: Props) => {
             to: `${email}`,
             subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
             html: ` ${emailType === "VERIFY" ? 
-            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/api/users/verify-email?token=${token}">here</a> to verify your email or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/api/users/verify-email?token=${token}</p>` : 
-            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/api/users/reset-password?token=${token}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/api/users/reset-password?token=${token}</p>`}`
+            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/verify-email?token=${token}">here</a> to verify your email or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verify-email?token=${token}</p>` : 
+            `<p>Click <a target = "_blank" href="${process.env.DOMAIN}/reset-password?token=${token}">here</a> to reset your password or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/reset-password?token=${token}</p>`}`
         })
 
         // return the mail response

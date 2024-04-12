@@ -1,6 +1,5 @@
 import { connectDB } from "@/db"
 import User from "@/models/User"
-import bcryptjs from "bcryptjs"
 import { NextResponse, NextRequest } from "next/server"
 
 // Connection to DB
@@ -10,7 +9,7 @@ connectDB()
 export const POST = async (request: NextRequest) => {
     try {
         // get the token from request body
-        const { token } = await request.json()
+        const token = await request.json()
 
         // validation of the token
         const user = await User.findOne({ verifyToken: token, verifyTokenExpiry: { $gt: Date.now() } })
