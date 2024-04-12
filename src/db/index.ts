@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export const connectDB = async () => {
     try{
-        await mongoose.connect(`${process.env.MONGODB_URL}/chai-nextjs`)
+        mongoose.connect(`${process.env.MONGODB_URL}/chai-next`)
         const connection = mongoose.connection
 
         // if connection is successful
@@ -10,12 +10,12 @@ export const connectDB = async () => {
             console.log(`MongoDB is connected successfully`)
         })
 
+        // if connection fails
         connection.on("error", (err) => {
-            console.log(`MongoDB connection error: `,err)
+            console.log(`Failed to connect to MongoDB with an error: `,err)
             process.exit(1)
         })
-
     }catch(err){
-        console.log(`Something went wrong while connecting to MongoDB with error: `,err)
+        console.log(`Something went wrong while connecting to MongoDB: `,err)
     }
-} 
+}

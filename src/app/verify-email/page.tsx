@@ -1,62 +1,68 @@
-"use client";
+"use client"
 
-import axios from "axios";
+import axios from "axios"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation";
-// import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
-const verifyemail = () => {
+const verifyEmail = () => {
     const searchParams = useSearchParams()
-    // const router = useRouter()
 
     const [token, setToken] = useState("")
     const [verified, setVerified] = useState(false)
     const [error, setError] = useState(false)
 
-    const verifyUserEmail = async () => {
+    const getTokenFromUrl = () => {
+        setError(false)
+
+        // get the token from url
+        const urlToken: any = searchParams.get("token")
+        setToken(urlToken)
+    }
+
+    const emailVerification = async () => {
         try {
-            const response = await axios.post("/api/users/verify-email", token)
-            console.log(response)
-            setVerified(true)
             setError(false)
+            const response = await axios.post(`/api/users/verify-email`, { token: token })
+            console.log(response.data)
+            setVerified(true)
         } catch (err: any) {
             setError(true)
             console.log(err.response.data)
         }
     }
 
+    // Getting the token
     useEffect(() => {
-        setError(false)
-        const urlToken = searchParams.get("token")
-        if(urlToken != null){
-            setToken(urlToken)
-        }
+        getTokenFromUrl()
     }, [])
 
+    // Checking for the token
     useEffect(() => {
-        setError(false)
         if (token.length > 0) {
-            verifyUserEmail()
+            emailVerification()
         }
     }, [token])
+
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
 
             <h1 className="text-4xl">Verify Email</h1>
-            <h2 className="p-2 bg-orange-500 text-black">{token ? `${token}` : "no token"}</h2>
+            <h2 className="p-2 bg-orange-500 text-black mt-3">{token ? token : "No Token"}</h2>
 
             {verified && (
-                <div>
+                <div className="text-center">
                     <h2 className="text-2xl">Email Verified</h2>
                     <Link href="/login">
                         Login
                     </Link>
                 </div>
             )}
+
             {error && (
-                <div>
+                <div className="mt-5">
                     <h2 className="text-2xl bg-red-500 text-black">Error</h2>
                 </div>
             )}
@@ -64,4 +70,4 @@ const verifyemail = () => {
     )
 }
 
-export default verifyemail
+export default verifyEmail

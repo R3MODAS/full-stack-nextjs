@@ -1,8 +1,8 @@
-import { connectDB } from "@/db"
-import User from "@/models/User"
-import { mailer } from "@/utils/mailer"
+import { connectDB } from "@/db";
+import User from "@/models/User";
+import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs"
-import { NextResponse, NextRequest } from "next/server"
+import { mailer } from "@/utils/mailer";
 
 // Connection to DB
 connectDB()
@@ -21,7 +21,7 @@ export const POST = async (request: NextRequest) => {
             }, {status: 400})
         }
 
-        // check if the user already exists in the db or not
+        // check if the user exists in the db or not
         const user = await User.findOne({email})
         if(user){
             return NextResponse.json({
@@ -31,29 +31,27 @@ export const POST = async (request: NextRequest) => {
         }
 
         // hash the password
-        const salt = await bcryptjs.genSalt(10)
-        const hashedPassword = await bcryptjs.hash(password, salt)
+        const hashedPassword = await bcryptjs.hash(password, 10)
 
         // create an entry for user in db
-        const newUser = await User.create({username, email, password: hashedPassword})
+        const newUser = await User.create({email, username, password: hashedPassword})
 
-        // send an email to the user regarding email verification
-        await mailer({email, emailType: "VERIFY", userId: newUser._id})
+        // send a mail regarding the email verification
+        await mailer({email: email, emailType: "VERIFY", userId: newUser._id})
 
         // return the response
         return NextResponse.json({
             success: true,
             message: "User is registered successfully",
-            newUser
-        }, {status: 200})
+            user: newUser
+        })
 
     }catch(err: any){
-        console.log(err.message)
+        console.log(err)
         return NextResponse.json({
             success: false,
-            message: "Something went wrong while registering the user",
+            message: "Something went wrong while signing up the user",
             error: err.message
         }, {status: 500})
     }
 }
-

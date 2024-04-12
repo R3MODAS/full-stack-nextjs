@@ -1,12 +1,8 @@
-import { useState } from "react"
-
 const profile = () => {
-  const [data, setData] = useState()
-
-  
-
   return (
-    <div>Welcome to Profile Page</div>
+    <div>
+        <h1>Welcome to the Profile page</h1>
+    </div>
   )
 }
 

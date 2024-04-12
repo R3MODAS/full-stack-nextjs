@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server"
 
-// GET request on logout route
 export const GET = () => {
     try{
         // create a response
         const response = NextResponse.json({
             success: true,
-            message: "Logout successfully"
+            message: "Log out successfully"
         }, {status: 200})
 
-        // update the cookie
+        // remove the cookie data
         response.cookies.set("token", "", {
             httpOnly: true,
             expires: new Date(0)
@@ -17,7 +16,7 @@ export const GET = () => {
 
         // return the response
         return response
-
+        
     }catch(err: any){
         console.log(err.message)
         return NextResponse.json({
