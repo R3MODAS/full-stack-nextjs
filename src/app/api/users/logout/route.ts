@@ -1,13 +1,9 @@
-import { connectDB } from "@/db";
-import { NextRequest, NextResponse } from "next/server";
-
-// connection to DB
-connectDB()
+import { NextResponse } from "next/server"
 
 // GET request on logout route
-export async function GET(request: NextRequest) {
+export const GET = () => {
     try{
-        // create the response
+        // create a response
         const response = NextResponse.json({
             success: true,
             message: "Logout successfully"
@@ -22,8 +18,12 @@ export async function GET(request: NextRequest) {
         // return the response
         return response
 
-    }catch(err){
-
+    }catch(err: any){
+        console.log(err.message)
+        return NextResponse.json({
+            success: false,
+            message: "Something went wrong while logging out",
+            error: err.message
+        }, {status: 500})
     }
 }
-
