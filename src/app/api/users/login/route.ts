@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server"
-import User from "@/models/User"
+import User from "@/models/User";
+import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { connectDB } from "@/db"
+import { connectDB } from "@/db";
 
 // Connection to DB
 connectDB()
@@ -17,7 +17,7 @@ export const POST = async (request: NextRequest) => {
         if(!email || !password){
             return NextResponse.json({
                 success: false,
-                message: "Please fill the details properly"
+                message: "Please fill the data properly"
             }, {status: 400})
         }
 
@@ -35,15 +35,14 @@ export const POST = async (request: NextRequest) => {
         if(!comparePassword){
             return NextResponse.json({
                 success: false,
-                message: "Password does not match"
+                message: "Incorrect Password"
             }, {status: 400})
         }
 
         // create a payload for jwt token
         const payload = {
-            id : user._id,
-            email: user.email,
-            username: user.username
+            id: user._id,
+            email: user._email
         }
 
         // create a jwt token
@@ -54,7 +53,7 @@ export const POST = async (request: NextRequest) => {
         // create a response
         const response = NextResponse.json({
             success: true,
-            message: "Logged in successfully"
+            message: "User logged in successfully"
         }, {status: 200})
 
         // create a cookie
@@ -69,7 +68,7 @@ export const POST = async (request: NextRequest) => {
         console.log(err.message)
         return NextResponse.json({
             success: false,
-            message: "Something went wrong while logging the user",
+            message: "Something went wrong while the user login",
             error: err.message
         }, {status: 500})
     }

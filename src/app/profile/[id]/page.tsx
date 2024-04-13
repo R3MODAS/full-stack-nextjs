@@ -1,12 +1,16 @@
-const page = ({ params }: any) => {
-    console.log(params)
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2 gap-2">
-            <h1 className="text-xl">Profile page</h1>
-            <p className="px-3 py-2 rounded bg-green-500 text-black">{params.id}</p>
+"use client"
 
+import Link from "next/link"
+
+const Id = ({ params }: any) => {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen gap-2">
+            <h2 className="text-2xl font-bold">Here is the User Id</h2>
+            <hr />
+            <p className="text-xl px-3 py-2 bg-orange-500 text-black">{params.id}</p>
+            <p>Go back to <Link className="text-blue-500" href="/profile">profile</Link></p>
         </div>
     )
 }
 
-export default page
+export default Id

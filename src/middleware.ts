@@ -1,34 +1,34 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
+ 
 export function middleware(request: NextRequest) {
-    // get the path
+
+    // get the path user is currently
     const path = request.nextUrl.pathname
 
-    // check the type of path
-    const isPublicPath = path === "/login" || path === "/signup" || path === "/verify-email"
+    // get the token from cookie
+    const token = request.cookies.get("token")?.value
 
-    // get the token from cookies
-    const token = request.cookies.get("token")?.value || ""
+    // public paths
+    const isPublicPath = path === "/" || path === "/signup" || path === "/login" || path === "/verify-email"
 
-    // if we have token and we are visiting public route
+    // check if the user is visiting any public path with token
     if(isPublicPath && token){
         return NextResponse.redirect(new URL('/profile', request.url))
     }
 
-    // if we don't have token and we are visiting protected route
-    else if(!isPublicPath && !token){
-        return NextResponse.redirect(new URL('/login', request.url))
+    // check if the user is visiting any restricted path without any token
+    if(!isPublicPath && !token){
+        return NextResponse.redirect(new URL('/', request.url))
     }
-
 }
-
+ 
 export const config = {
-    matcher: [
-        "/",
-        "/login",
-        "/signup",
-        "/profile",
-        "/verify-email"
-    ],
+  matcher: [
+    "/",
+    "/signup",
+    "/login",
+    "/verify-email",
+    "/profile"
+  ],
 }

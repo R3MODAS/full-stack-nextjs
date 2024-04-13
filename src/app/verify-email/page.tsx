@@ -4,70 +4,55 @@ import axios from "axios"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 
-const verifyEmail = () => {
+const VerifyEmail = () => {
     const searchParams = useSearchParams()
-
-    const [token, setToken] = useState("")
     const [verified, setVerified] = useState(false)
     const [error, setError] = useState(false)
+    const [token, setToken] = useState("")
+    const [errormessage, setErrorMessage] = useState("")
 
-    const getTokenFromUrl = () => {
+    const fetchToken = () => {
         setError(false)
-
-        // get the token from url
         const urlToken: any = searchParams.get("token")
         setToken(urlToken)
     }
 
-    const emailVerification = async () => {
-        try {
-            setError(false)
-            const response = await axios.post(`/api/users/verify-email`, { token: token })
-            console.log(response.data)
-            setVerified(true)
-        } catch (err: any) {
-            setError(true)
+    useEffect(() => {
+        fetchToken()
+    }, [])
+
+    const verifyEmail = async () => {
+        try{
+            if(token.length > 0){
+                const res = await axios.post(`/api/users/verify-email`, {token: token})
+                setVerified(true)
+                setError(false)
+            }
+        }catch(err: any){
             console.log(err.response.data)
+            toast.error(err.response.data.message)
+            setErrorMessage(err.response.data.message)
+            setError(true)
         }
     }
 
-    // Getting the token
-    useEffect(() => {
-        getTokenFromUrl()
-    }, [])
-
-    // Checking for the token
-    useEffect(() => {
-        if (token.length > 0) {
-            emailVerification()
-        }
-    }, [token])
-
-
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
-
-            <h1 className="text-4xl">Verify Email</h1>
-            <h2 className="p-2 bg-orange-500 text-black mt-3">{token ? token : "No Token"}</h2>
+            <h2 className="text-3xl font-bold mb-4">Please verify your email here</h2>
+            {
+                !verified && <button className="bg-white text-black px-4 py-2 rounded-lg font-medium" onClick={verifyEmail}>Verify Email</button>
+            }
 
             {verified && (
-                <div className="text-center">
-                    <h2 className="text-2xl">Email Verified</h2>
-                    <Link href="/login">
-                        Login
-                    </Link>
+                <div className="text-center my-5">
+                    <p>Email is verified successfully !! Visit the <Link href="/login" className="text-blue-500 rounded-lg">Login</Link> here</p>
                 </div>
             )}
-
-            {error && (
-                <div className="mt-5">
-                    <h2 className="text-2xl bg-red-500 text-black">Error</h2>
-                </div>
-            )}
+            <Toaster />
         </div>
     )
 }
 
-export default verifyEmail
+export default VerifyEmail

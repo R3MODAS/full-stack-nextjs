@@ -6,25 +6,25 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 
-const signup = () => {
+const Signup = () => {
     const router = useRouter()
     const [user, setUser] = useState({
         username: "",
         email: "",
         password: ""
     })
-    const [loading, setLoading] = useState(false)
     const [buttonDisabled, setButtonDisabled] = useState(false)
+    const [loading, setLoading] = useState(false)
 
+    // Signup handler
     const onSignup = async () => {
         try{
             setLoading(true)
-            const response = await axios.post(`/api/users/signup`, user)
-            console.log(response.data)
+            await axios.post(`/api/users/signup`, user)
             router.push("/login")
         }catch(err: any){
-            toast.error("Failed to signup")
             console.log(err.response.data)
+            toast.error(err.response.data?.message)
         }
         finally{
             setLoading(false)
@@ -38,11 +38,11 @@ const signup = () => {
         else{
             setButtonDisabled(true)
         }
-    }, [user]) 
+    }, [user])
 
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
-            <h1 className="text-3xl mb-4 font-bold">{loading ? "Processing..." : "Signup"}</h1>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+            <h1 className="text-3xl mb-4 font-bold">{loading ? "Loading..." : "Signup"}</h1>
             <hr />
             <label htmlFor="username">username</label>
             <input
@@ -73,12 +73,12 @@ const signup = () => {
             />
             <button
                 onClick={onSignup}
-                disabled = {buttonDisabled? true : false}
-                className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 cursor-pointer">{buttonDisabled ? "No Signup" : "Signup"}</button>
+                disabled = {buttonDisabled ? true : false}
+                className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600">{buttonDisabled ? "No Signup" : "Signup"}</button>
             <Link href="/login">Visit login page</Link>
             <Toaster />
         </div>
-    )
+  )
 }
 
-export default signup
+export default Signup

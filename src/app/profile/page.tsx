@@ -6,50 +6,63 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 
-const profile = () => {
+const Profile = () => {
   const router = useRouter()
-  const [data, setData] = useState("Nothing")
+  const [data, setData] = useState<any>({})
 
-  const getUserDetails = async () => {
+  const fetchUserDetails = async () => {
     try {
       const response = await axios.get(`/api/users/profile`)
-      console.log(response.data?.user)
-      setData(response.data?.user?._id)
+      setData(response.data?.user)
     } catch (err: any) {
       console.log(err.response.data)
+      toast.error(err.response.data.message)
     }
   }
 
-  const logout = async () => {
-    try {
-      await axios.get(`/api/users/logout`)
+  const onLogout = async () => {
+    try{
+      await axios.get("/api/users/logout")
+      toast.success("Log out successfully")
       router.push("/login")
-    } catch (err: any) {
-      console.log(err.message)
-      toast.error(err.message)
+    }catch(err: any){
+      console.log(err.response.data)
+      toast.error(err.response.data?.message)
     }
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>Profile</h1>
+      <h1 className="text-2xl font-bold">Welcome to Profile</h1>
       <hr />
-      <p>Profile page</p>
-      <h2 className="p-1 rounded bg-green-500">{data === "Nothing" ? "Nothing" : <Link href={`/profile/${data}`}>{data}</Link>}</h2>
-      <hr />
-      <button
-        onClick={logout}
-        className="bg-blue-500 mt-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >Logout</button>
 
-      <button
-        onClick={getUserDetails}
-        className="bg-green-800 mt-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >GetUser Details</button>
+      <div className="flex gap-4 mb-4">
+        <button
+          onClick={fetchUserDetails}
+          className="bg-green-800 mt-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >User Details</button>
+
+        <button
+          onClick={onLogout}
+          className="bg-blue-500 mt-4 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >Logout</button>
+      </div>
+
+      {
+        Object.keys(data).length > 0 &&
+        <div className="text-center">
+          <div className="bg-orange-500 px-5 py-3 text-base text-left mb-4">
+            <h3>Username: {data!.username}</h3>
+            <h3>Email: {data!.email}</h3>
+            <h3>Verified: {data?.isVerified === true ? "Yes" : "No"}</h3>
+          </div>
+          <Link href={`/profile/${data?._id}`} className="bg-green-700 px-3 py-2">Get the User ID</Link>
+        </div>
+      }
 
       <Toaster />
     </div>
   )
 }
 
-export default profile
+export default Profile
