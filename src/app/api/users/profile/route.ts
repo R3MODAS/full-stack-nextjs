@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Connection to DB
 connectDB()
 
-export const POST = async (request: NextRequest) => {
+export const GET = async (request: NextRequest) => {
     try{
         // get the user id
         const userId = tokenData(request)

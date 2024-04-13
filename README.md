@@ -29,3 +29,5 @@
 - Always make sure to connect to MongoDB first (Nextjs does not knows if they are connected to MongoDB for the first time or not) and then define a function with the request name (POST/GET/PUT/DELETE) that we are gonna make on a specific route (POST request on signup route) and inside that function, the controller logic is written.
 
 - NextRequest and NextResponse are used for request and response here and request.json() works as request.body
+
+- middleware.ts should be defined inside the src or app folder with the name defined

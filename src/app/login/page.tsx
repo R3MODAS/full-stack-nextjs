@@ -4,7 +4,7 @@ import axios from "axios"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 
 const login = () => {
     const router = useRouter()
@@ -23,7 +23,7 @@ const login = () => {
             router.push("/profile")
         } catch (err: any) {
             toast.error("Failed to Login")
-            console.log(err.response.data)
+            console.log(err.message)
         }
         finally{
             setLoading(false)
@@ -68,6 +68,7 @@ const login = () => {
                 className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
             >{buttonDisabled ? "No Login" : "Login"}</button>
             <Link href="/signup">Visit Signup page</Link>
+            <Toaster />
         </div>
     )
 }

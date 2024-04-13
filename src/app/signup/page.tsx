@@ -4,7 +4,7 @@ import axios from "axios"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 
 const signup = () => {
     const router = useRouter()
@@ -20,7 +20,7 @@ const signup = () => {
         try{
             setLoading(true)
             const response = await axios.post(`/api/users/signup`, user)
-            console.log("Signed up successfully", response.data)
+            console.log(response.data)
             router.push("/login")
         }catch(err: any){
             toast.error("Failed to signup")
@@ -76,6 +76,7 @@ const signup = () => {
                 disabled = {buttonDisabled? true : false}
                 className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 cursor-pointer">{buttonDisabled ? "No Signup" : "Signup"}</button>
             <Link href="/login">Visit login page</Link>
+            <Toaster />
         </div>
     )
 }
