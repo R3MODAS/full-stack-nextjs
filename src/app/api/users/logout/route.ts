@@ -9,7 +9,9 @@ export const GET = () => {
         }, {status: 200})
 
         // remove the cookie value
-        response.cookies.delete("token")
+        response.cookies.set("token", "", {
+            httpOnly: true
+        })
 
         // return the response
         return response
