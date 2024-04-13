@@ -10,7 +10,8 @@ export const GET = () => {
 
         // remove the cookie value
         response.cookies.set("token", "", {
-            httpOnly: true
+            httpOnly: true,
+            expires: new Date(0)
         })
 
         // return the response
