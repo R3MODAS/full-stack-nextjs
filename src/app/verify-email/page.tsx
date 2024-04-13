@@ -9,12 +9,10 @@ import toast, { Toaster } from "react-hot-toast"
 const VerifyEmail = () => {
     const searchParams = useSearchParams()
     const [verified, setVerified] = useState(false)
-    const [error, setError] = useState(false)
     const [token, setToken] = useState("")
     const [errormessage, setErrorMessage] = useState("")
 
     const fetchToken = () => {
-        setError(false)
         const urlToken: any = searchParams.get("token")
         setToken(urlToken)
     }
@@ -24,17 +22,15 @@ const VerifyEmail = () => {
     }, [])
 
     const verifyEmail = async () => {
-        try{
-            if(token.length > 0){
-                const res = await axios.post(`/api/users/verify-email`, {token: token})
+        try {
+            if (token.length > 0) {
+                const res = await axios.post(`/api/users/verify-email`, { token: token })
                 setVerified(true)
-                setError(false)
             }
-        }catch(err: any){
+        } catch (err: any) {
             console.log(err.response.data)
             toast.error(err.response.data.message)
             setErrorMessage(err.response.data.message)
-            setError(true)
         }
     }
 
