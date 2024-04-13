@@ -2,19 +2,20 @@
 
 import axios from "axios"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import toast, { Toaster } from "react-hot-toast"
 
 const VerifyEmail = () => {
-    const searchParams = useSearchParams()
     const [verified, setVerified] = useState(false)
     const [token, setToken] = useState("")
     const [errormessage, setErrorMessage] = useState("")
 
     const fetchToken = () => {
-        const urlToken: any = searchParams.get("token")
-        setToken(urlToken)
+        // const urlToken: any = searchParams.get("token")
+        // setToken(urlToken)
+
+        const urlToken = window.location.search.split("=")[1];
+        setToken(urlToken || "");
     }
 
     useEffect(() => {
