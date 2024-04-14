@@ -24,7 +24,9 @@ const Profile = () => {
     try{
       await axios.get("/api/users/logout")
       toast.success("Log out successfully")
+      window.location.reload()
       router.push("/login")
+
     }catch(err: any){
       console.log(err.response.data)
       toast.error(err.response.data?.message)
